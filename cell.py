@@ -24,11 +24,8 @@ class Cell:
             return
         self.sketched_value = value
 
-
     def draw(self, selected):
         color = (0, 0, 0) if not selected else (65, 105, 225, 50)
-
-
 
         x = self.col * self.cell_size
         y = self.row * self.cell_size

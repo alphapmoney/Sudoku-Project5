@@ -52,6 +52,12 @@ class Board:
     def set_cell_value(self, value):
         self.selected_cell.set_cell_value(value)
 
+    def is_full(self):
+        for row in range(9):
+            for col in range(9):
+                if self.board[row][col] == 0:
+                    return False
+
 
 
 

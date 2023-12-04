@@ -102,5 +102,7 @@ if __name__ == "__main__":
 
         screen.fill((255, 255, 255))
         sudoku_board.draw()
+        if sudoku_board.is_full():
+            # OK BRENDAN DO THIS PART BIG BOY!
         pygame.display.update()
 
