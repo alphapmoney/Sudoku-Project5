@@ -67,6 +67,8 @@ if __name__ == "__main__":
 
     difficulty = draw_game_start(screen)
 
+
+
     sudoku_board = Board(600, 700, screen, difficulty)
 
     while True:
@@ -75,7 +77,16 @@ if __name__ == "__main__":
                 pygame.quit()
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                sudoku_board.cell_clicked(event.pos)
+                x, y = event.pos
+                if y > 600:
+                    if sudoku_board.reset_button_rect.collidepoint(event.pos):
+                        print("Reset")
+                    elif sudoku_board.restart_button_rect.collidepoint(event.pos):
+                        print("Restart")
+                    elif sudoku_board.exit_button_rect.collidepoint(event.pos):
+                        print("Exit")
+                else:
+                    sudoku_board.cell_clicked(event.pos)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                 sudoku_board.set_cell_sketched_value(1)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
@@ -101,8 +112,25 @@ if __name__ == "__main__":
                 sudoku_board.set_cell_sketched_value(0)
 
         screen.fill((255, 255, 255))
-        sudoku_board.draw()
+        x, y = pygame.mouse.get_pos()
+        if sudoku_board.reset_button_rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            sudoku_board.draw(True, False, False)
+        elif sudoku_board.restart_button_rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            sudoku_board.draw(False, True, False)
+        elif sudoku_board.exit_button_rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            sudoku_board.draw(False, False, True)
+        elif y < 600 and 0 <= x <= screen.get_width():
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            sudoku_board.draw(False, False, False)
+        else:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+            sudoku_board.draw(False, False, False)
+
         if sudoku_board.is_full():
+            print("You win!")
             # OK BRENDAN DO THIS PART BIG BOY!
         pygame.display.update()
 

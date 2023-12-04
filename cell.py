@@ -3,13 +3,13 @@ import pygame
 
 class Cell:
     rect = None
-    cell_size = 66
 
-    def __init__(self, value, row, column, screen):
+    def __init__(self, value, row, column, screen, cell_size):
         self.value = value
         self.row = row
         self.col = column
         self.screen = screen
+        self.cell_size = cell_size
         self.sketched_value = 0
         self.locked = True if value != 0 else False
 
@@ -25,7 +25,7 @@ class Cell:
         self.sketched_value = value
 
     def draw(self, selected):
-        color = (0, 0, 0) if not selected else (65, 105, 225, 50)
+        color = (0, 0, 0) if not selected else (65, 105, 225, 0)
 
         x = self.col * self.cell_size
         y = self.row * self.cell_size
