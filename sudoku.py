@@ -1,5 +1,8 @@
 import pygame
-from board import Board
+import sys
+from game import Board
+import sudoku_generator as sg
+
 
 def draw_game_start(screen):
     title_font = pygame.font.Font(None, 100)
@@ -13,7 +16,6 @@ def draw_game_start(screen):
     easy_button_rect = pygame.Rect(67, 500, 100, 50)
     medium_button_rect = pygame.Rect(229, 500, 150, 50)
     hard_button_rect = pygame.Rect(441, 500, 100, 50)
-
 
     while True:
         for event in pygame.event.get():
@@ -55,27 +57,50 @@ def draw_game_start(screen):
         screen.blit(medium_button, (240, 508))
         screen.blit(hard_button, (450, 508))
 
-
         pygame.display.update()
+
 
 if __name__ == "__main__":
     pygame.init()
-    screen = pygame.display.set_mode((600, 700))
-    pygame.display.set_caption("Sudoku")
+
+    screen = pygame.display.set_mode((597, 700))
+
     difficulty = draw_game_start(screen)
 
-    board = Board(screen, difficulty)
-    screen = pygame.display.set_mode((900, 1000))
+    sudoku_board = Board(600, 700, screen, difficulty)
 
     while True:
-        screen.fill((255, 255, 255))
-        board.event_loop()
-        board.screen_update()
-        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                sudoku_board.cell_clicked(event.pos)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+                sudoku_board.set_cell_sketched_value(1)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+                sudoku_board.set_cell_sketched_value(2)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+                sudoku_board.set_cell_sketched_value(3)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
+                sudoku_board.set_cell_sketched_value(4)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_5:
+                sudoku_board.set_cell_sketched_value(5)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_6:
+                sudoku_board.set_cell_sketched_value(6)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_7:
+                sudoku_board.set_cell_sketched_value(7)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_8:
+                sudoku_board.set_cell_sketched_value(8)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_9:
+                sudoku_board.set_cell_sketched_value(9)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE:
+                sudoku_board.set_cell_sketched_value(0)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                sudoku_board.set_cell_value(sudoku_board.selected_cell.sketched_value)
+                sudoku_board.set_cell_sketched_value(0)
 
-
+        screen.fill((255, 255, 255))
+        sudoku_board.draw()
+        pygame.display.update()
 

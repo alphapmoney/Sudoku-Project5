@@ -4,7 +4,7 @@ from sudoku_generator import SudokuGenerator
 
 
 class Board:
-    def __init__(self, screen: pygame.surface):
+    def __init__(self, screen: pygame.surface, removed):
         self.screen = screen
 
         self.user_sketch = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -18,7 +18,7 @@ class Board:
         self.end_game = False
         self.hover_obj = None
 
-        self.sudoku_generator = SudokuGenerator(9, 31)
+        self.sudoku_generator = SudokuGenerator(9, removed)
         self.sudoku_generator.fill_values()
         self.completed_puzzle = self.sudoku_generator.get_board().copy()
         self.sudoku_generator.print_board()
@@ -58,11 +58,14 @@ class Board:
                 if event.button == 1:
                     if self.hover_obj == 0:
                         self.puzzle = self.puzzle_og
-                        self.user_sketch = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        self.user_sketch = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
                         self.puzzle = []
                         for x in range(9):
@@ -71,11 +74,14 @@ class Board:
                                 self.puzzle[x].append(self.puzzle_og[x][y])
                     elif self.hover_obj == 1:
                         t = 1
-                        self.user_sketch = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        self.user_sketch = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
                     elif self.hover_obj == 2:
                         t = 0
