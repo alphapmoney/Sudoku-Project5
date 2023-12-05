@@ -1,7 +1,5 @@
 import pygame
-import sys
-from game import Board
-import sudoku_generator as sg
+from board import Board
 
 
 def draw_game_start(screen):
@@ -60,77 +58,89 @@ def draw_game_start(screen):
         pygame.display.update()
 
 
-if __name__ == "__main__":
-    pygame.init()
-
-    screen = pygame.display.set_mode((597, 700))
-
-    difficulty = draw_game_start(screen)
-
-
-
-    sudoku_board = Board(600, 700, screen, difficulty)
-
+def game():
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if y > 600:
-                    if sudoku_board.reset_button_rect.collidepoint(event.pos):
-                        print("Reset")
-                    elif sudoku_board.restart_button_rect.collidepoint(event.pos):
-                        print("Restart")
-                    elif sudoku_board.exit_button_rect.collidepoint(event.pos):
-                        print("Exit")
-                else:
-                    sudoku_board.cell_clicked(event.pos)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                sudoku_board.set_cell_sketched_value(1)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-                sudoku_board.set_cell_sketched_value(2)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
-                sudoku_board.set_cell_sketched_value(3)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
-                sudoku_board.set_cell_sketched_value(4)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_5:
-                sudoku_board.set_cell_sketched_value(5)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_6:
-                sudoku_board.set_cell_sketched_value(6)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_7:
-                sudoku_board.set_cell_sketched_value(7)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_8:
-                sudoku_board.set_cell_sketched_value(8)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_9:
-                sudoku_board.set_cell_sketched_value(9)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE:
-                sudoku_board.set_cell_sketched_value(0)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                sudoku_board.set_cell_value(sudoku_board.selected_cell.sketched_value)
-                sudoku_board.set_cell_sketched_value(0)
+        pygame.init()
 
-        screen.fill((255, 255, 255))
-        x, y = pygame.mouse.get_pos()
-        if sudoku_board.reset_button_rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            sudoku_board.draw(True, False, False)
-        elif sudoku_board.restart_button_rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            sudoku_board.draw(False, True, False)
-        elif sudoku_board.exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            sudoku_board.draw(False, False, True)
-        elif y < 600 and 0 <= x <= screen.get_width():
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            sudoku_board.draw(False, False, False)
-        else:
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-            sudoku_board.draw(False, False, False)
+        screen = pygame.display.set_mode((597, 700))
 
-        if sudoku_board.is_full():
-            print("You win!")
-            # OK BRENDAN DO THIS PART BIG BOY!
-        pygame.display.update()
+        difficulty = draw_game_start(screen)
+
+        sudoku_board = Board(screen, difficulty)
+
+        new_game = False
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    x, y = event.pos
+                    if y > 600:
+                        if sudoku_board.reset_button_rect.collidepoint(event.pos):
+                            sudoku_board.reset()
+                        elif sudoku_board.restart_button_rect.collidepoint(event.pos):
+                            new_game = True
+                            break
+                        elif sudoku_board.exit_button_rect.collidepoint(event.pos):
+                            print("Bye bye thanks for playing")
+                            pygame.quit()
+                            quit()
+                        else:
+                            sudoku_board.selected_cell = None
+                    else:
+                        sudoku_board.cell_clicked(event.pos)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_1 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(1)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_2 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(2)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_3 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(3)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_4 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(4)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_5 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(5)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_6 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(6)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_7 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(7)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_8 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(8)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_9 and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(9)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_sketched_value(0)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN and sudoku_board.selected_cell is not None:
+                    sudoku_board.set_cell_value(sudoku_board.selected_cell.sketched_value)
+                    sudoku_board.set_cell_sketched_value(0)
+            if new_game:
+                break
+
+            screen.fill((255, 255, 255))
+            x, y = pygame.mouse.get_pos()
+            if sudoku_board.reset_button_rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                sudoku_board.draw(True, False, False)
+            elif sudoku_board.restart_button_rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                sudoku_board.draw(False, True, False)
+            elif sudoku_board.exit_button_rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                sudoku_board.draw(False, False, True)
+            elif y < 600 and 0 <= x <= screen.get_width():
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                sudoku_board.draw(False, False, False)
+            else:
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                sudoku_board.draw(False, False, False)
+
+            if sudoku_board.is_full():
+                sudoku_board.check_win()
+
+                # OK BRENDAN DO THIS PART BIG BOY!
+            pygame.display.update()
+
+if __name__ == "__main__":
+    while True:
+        game()
 

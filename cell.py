@@ -17,7 +17,12 @@ class Cell:
         if self.locked:
             return
         self.value = value
+        self.sketched_value = 0
         self.locked = True
+
+    def set_cell_reset(self, value):
+        self.value = value
+        self.sketched_value = 0
 
     def set_cell_sketched_value(self, value):
         if self.locked:
@@ -25,7 +30,7 @@ class Cell:
         self.sketched_value = value
 
     def draw(self, selected):
-        color = (0, 0, 0) if not selected else (65, 105, 225, 0)
+        color = (0, 0, 0) if not selected else (196,245,255)
 
         x = self.col * self.cell_size
         y = self.row * self.cell_size

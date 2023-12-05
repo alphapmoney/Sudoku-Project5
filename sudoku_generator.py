@@ -66,10 +66,11 @@ class SudokuGenerator:
     '''
 
     def valid_in_row(self, row, num):
-        for cell in self.board[row]:
-            if cell == num:
-                return False
-        return True
+        # for cell in self.board[row]:
+        #     if cell == num:
+        #         return False
+        # return True
+        return num not in self.board[row]
 
     '''
 	Determines if num is contained in the specified column (vertical) of the board
@@ -83,10 +84,11 @@ class SudokuGenerator:
     '''
 
     def valid_in_col(self, col, num):
-        for row in self.board:
-            if row[col] == num:
-                return False
-        return True
+        # for row in self.board:
+        #     if row[col] == num:
+        #         return False
+        # return True
+        return num not in [self.board[row][col] for row in range(self.row_length)]
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -102,9 +104,9 @@ class SudokuGenerator:
     '''
 
     def valid_in_box(self, row_start, col_start, num):
-        for row in self.board[row_start:row_start + 2]:
-            for cell in row[col_start:col_start + 2]:
-                if cell == num:
+        for row in range(3):
+            for col in range(3):
+                if self.board[row_start + row][col_start + col] == num:
                     return False
         return True
 
@@ -120,7 +122,8 @@ class SudokuGenerator:
     '''
 
     def is_valid(self, row, col, num):
-        if self.valid_in_row(row, num) and self.valid_in_box(row, col, num) and self.valid_in_col(col, num):
+        if (self.valid_in_row(row, num) and self.valid_in_box(row - row % 3, col - col % 3, num)
+                and self.valid_in_col(col, num)):
             return True
         else:
             return False
@@ -234,11 +237,8 @@ class SudokuGenerator:
 
         replacements = possible_coords[:self.removed_cells]
 
-        temp_board = [row[:] for row in self.board]
-
         for x, y in replacements:
-            temp_board[x][y] = 0
-        return temp_board
+            self.board[x][y] = 0
 
 
 '''
