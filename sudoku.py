@@ -5,15 +5,18 @@ from board import Board
 def draw_game_start(screen):
     title_font = pygame.font.Font(None, 100)
     button_font = pygame.font.Font(None, 50)
+    help_button_font = pygame.font.Font(None, 30)
 
     title = title_font.render("Sudoku", True, (255, 140, 0))
     easy_button = button_font.render("Easy", True, (255, 255, 255))
     medium_button = button_font.render("Medium", True, (255, 255, 255))
     hard_button = button_font.render("Hard", True, (255, 255, 255))
+    help_button = help_button_font.render("Help", True, (255, 255, 255))
 
     easy_button_rect = pygame.Rect(67, 500, 100, 50)
     medium_button_rect = pygame.Rect(229, 500, 150, 50)
     hard_button_rect = pygame.Rect(441, 500, 100, 50)
+    help_button_rect = pygame.Rect(270, 610, 60, 35)
 
     while True:
         for event in pygame.event.get():
@@ -30,12 +33,15 @@ def draw_game_start(screen):
                 elif hard_button_rect.collidepoint(event.pos):
                     print("Hard")
                     return 50
+                elif help_button_rect.collidepoint(event.pos):
+                    help_screen(screen)
 
         screen.fill((255, 255, 255))
         screen.blit(title, (175, 200))
         pygame.draw.rect(screen, (255, 140, 0), easy_button_rect)
         pygame.draw.rect(screen, (255, 140, 0), medium_button_rect)
         pygame.draw.rect(screen, (255, 140, 0), hard_button_rect)
+        pygame.draw.rect(screen, (255, 140, 0), help_button_rect)
 
         mouse = pygame.mouse.get_pos()
         if easy_button_rect.collidepoint(mouse):
@@ -48,14 +54,64 @@ def draw_game_start(screen):
         elif hard_button_rect.collidepoint(mouse):
             pygame.draw.rect(screen, (196, 98, 16), hard_button_rect)
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+        elif help_button_rect.collidepoint(mouse):
+            pygame.draw.rect(screen, (196, 98, 16), help_button_rect)
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
         else:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
         screen.blit(easy_button, (75, 508))
         screen.blit(medium_button, (240, 508))
         screen.blit(hard_button, (450, 508))
+        screen.blit(help_button, (277, 618))
 
         pygame.display.update()
+
+def help_screen(screen):
+    screen = pygame.display.set_mode((597, 600))
+    title_font = pygame.font.Font(None, 60)
+    text_font = pygame.font.Font(None, 30)
+    button_font = pygame.font.Font(None, 50)
+
+    title = title_font.render("How to play:", True, (255, 140, 0))
+    description1 = text_font.render("Click on cell to select it (will be highlighted)", True, (255, 140, 0))
+    description2 = text_font.render("Type a number to sketch it in the cell", True, (255, 140, 0))
+    description3 = text_font.render("Press enter to confirm the number", True, (255, 140, 0))
+    description4 = text_font.render("Press backspace to clear the sketch", True, (255, 140, 0))
+    back_button = button_font.render("Back", True, (255, 255, 255))
+
+    back_button_rect = pygame.Rect(250, 442, 100, 50)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if back_button_rect.collidepoint(event.pos):
+                    screen = pygame.display.set_mode((597, 700))
+                    return
+
+        screen.fill((255, 255, 255))
+        screen.blit(title, (175, 100))
+        screen.blit(description1, (100, 200))
+        screen.blit(description2, (100, 250))
+        screen.blit(description3, (100, 300))
+        screen.blit(description4, (100, 350))
+        pygame.draw.rect(screen, (255, 140, 0), back_button_rect)
+
+        mouse = pygame.mouse.get_pos()
+        if back_button_rect.collidepoint(mouse):
+            pygame.draw.rect(screen, (196, 98, 16), back_button_rect)
+            # Also makes cursor a pointer
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+        else:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+        screen.blit(back_button, (258, 450))
+
+        pygame.display.update()
+
 
 
 def game():
