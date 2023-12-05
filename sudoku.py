@@ -146,6 +146,18 @@ def game():
                             sudoku_board.selected_cell = None
                     else:
                         sudoku_board.cell_clicked(event.pos)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN and sudoku_board.selected_cell is not None:
+                    if sudoku_board.selected_cell.row < 8:
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row + 1][sudoku_board.selected_cell.col]
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP and sudoku_board.selected_cell is not None:
+                    if sudoku_board.selected_cell.row > 0:
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row - 1][sudoku_board.selected_cell.col]
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and sudoku_board.selected_cell is not None:
+                    if sudoku_board.selected_cell.col < 8:
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row][sudoku_board.selected_cell.col + 1]
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and sudoku_board.selected_cell is not None:
+                    if sudoku_board.selected_cell.col > 0:
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row][sudoku_board.selected_cell.col - 1]
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_1 and sudoku_board.selected_cell is not None:
                     sudoku_board.set_cell_sketched_value(1)
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_2 and sudoku_board.selected_cell is not None:
