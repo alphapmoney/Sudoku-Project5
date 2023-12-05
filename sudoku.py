@@ -26,7 +26,7 @@ def draw_game_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if easy_button_rect.collidepoint(event.pos):
                     print("Easy")
-                    return 30
+                    return 5
                 elif medium_button_rect.collidepoint(event.pos):
                     print("Medium")
                     return 40
@@ -112,9 +112,16 @@ def help_screen(screen):
 
         pygame.display.update()
 
+def win_game(screen):
+    win_font = pygame.font.Font(None, 100)
+    win = win_font.render("You Win", True, (255, 150, 0))
+    win_text_rect = win.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    screen.fill((255, 255, 255))
+    screen.blit(win, win_text_rect)
+    pygame.display.update()
 
-
-def game():
+test_mode = True
+def game(counter):
     while True:
         pygame.init()
 
@@ -201,14 +208,23 @@ def game():
             else:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 sudoku_board.draw(False, False, False)
+            # if test_mode:  # Define a variable for test mode
+            #     for row in range(9):
+            #         for col in range(9):
+            #             sudoku_board.cells[row][col].value = sudoku_board.complete_board[row][col]
 
             if sudoku_board.is_full():
                 sudoku_board.check_win()
-
-                # OK BRENDAN DO THIS PART BIG BOY!
+                win_game(screen)
+                if counter == 0:
+                    win_sfx = pygame.mixer.Sound("you_win.mp3")
+                    win_sfx.play()
+                    counter += 1
             pygame.display.update()
 
 if __name__ == "__main__":
+    counter = 0
+    game(counter)
     while True:
         game()
 
