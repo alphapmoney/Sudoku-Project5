@@ -1,5 +1,6 @@
 import pygame
 from board import Board
+import random
 
 
 def draw_game_start(screen):
@@ -26,6 +27,8 @@ def draw_game_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if easy_button_rect.collidepoint(event.pos):
                     print("Easy")
+                    music_sfx = pygame.mixer.Sound("music.mp3")
+                    music_sfx.play()
                     return 5
                 elif medium_button_rect.collidepoint(event.pos):
                     print("Medium")
@@ -66,6 +69,7 @@ def draw_game_start(screen):
         screen.blit(help_button, (277, 618))
 
         pygame.display.update()
+
 
 def help_screen(screen):
     screen = pygame.display.set_mode((597, 600))
@@ -112,21 +116,59 @@ def help_screen(screen):
 
         pygame.display.update()
 
+
 def win_game(screen):
     win_font = pygame.font.Font(None, 100)
     win = win_font.render("You Win", True, (255, 150, 0))
     win_text_rect = win.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-    screen.fill((255, 255, 255))
     screen.blit(win, win_text_rect)
-    pygame.display.update()
 
-test_mode = True
+
+def particle_animation(screen):
+    RED = [255, 0, 0]
+    ORANGE = [255, 165, 0]
+    YELLOW = [255, 222, 179]
+    GREEN = [0, 255, 0]
+    BLUE = [0, 0, 255]
+
+    confetti = []
+
+    for i in range(250):
+        x = random.randrange(0, 700)
+        y = random.randrange(0, 700)
+        confetti.append([x, y])
+        # confetti contains lists of some coordinates randomly made
+    clock = pygame.time.Clock()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        screen.fill((255, 255, 255))
+        win_game(screen)
+        confetti_color = random.choice([RED, ORANGE, YELLOW, GREEN, BLUE])
+
+        for party in range(len(confetti)):
+            pygame.draw.circle(screen, confetti_color, confetti[party], 3)
+            confetti[party][1] += 1
+            if confetti[party][1] > screen.get_height():  # Adjusted the limit here
+                confetti[party][1] = random.randrange(-50, -10)
+                confetti[party][0] = random.randrange(0, screen.get_width())
+
+        clock.tick(40)
+        pygame.display.update()
+
+
+# test_mode = True
 def game(counter):
     while True:
         pygame.init()
 
         screen = pygame.display.set_mode((597, 700))
-
+        win_screen = pygame.Surface((597, 700))
+        win_game(win_screen)
         difficulty = draw_game_start(screen)
 
         sudoku_board = Board(screen, difficulty)
@@ -155,16 +197,20 @@ def game(counter):
                         sudoku_board.cell_clicked(event.pos)
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN and sudoku_board.selected_cell is not None:
                     if sudoku_board.selected_cell.row < 8:
-                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row + 1][sudoku_board.selected_cell.col]
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row + 1][
+                            sudoku_board.selected_cell.col]
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP and sudoku_board.selected_cell is not None:
                     if sudoku_board.selected_cell.row > 0:
-                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row - 1][sudoku_board.selected_cell.col]
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row - 1][
+                            sudoku_board.selected_cell.col]
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and sudoku_board.selected_cell is not None:
                     if sudoku_board.selected_cell.col < 8:
-                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row][sudoku_board.selected_cell.col + 1]
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row][
+                            sudoku_board.selected_cell.col + 1]
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and sudoku_board.selected_cell is not None:
                     if sudoku_board.selected_cell.col > 0:
-                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row][sudoku_board.selected_cell.col - 1]
+                        sudoku_board.selected_cell = sudoku_board.cells[sudoku_board.selected_cell.row][
+                            sudoku_board.selected_cell.col - 1]
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_1 and sudoku_board.selected_cell is not None:
                     sudoku_board.set_cell_sketched_value(1)
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_2 and sudoku_board.selected_cell is not None:
@@ -215,16 +261,19 @@ def game(counter):
 
             if sudoku_board.is_full():
                 sudoku_board.check_win()
-                win_game(screen)
+                music_sfx = pygame.mixer.Sound("music.mp3")
+                music_sfx.stop()
                 if counter == 0:
                     win_sfx = pygame.mixer.Sound("you_win.mp3")
                     win_sfx.play()
                     counter += 1
+                particle_animation(screen)  # Move particle animation here
+                win_game(screen)
             pygame.display.update()
+
 
 if __name__ == "__main__":
     counter = 0
     game(counter)
     while True:
         game()
-
