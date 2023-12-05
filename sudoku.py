@@ -178,7 +178,7 @@ def game():
                     sudoku_board.set_cell_sketched_value(9)
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE and sudoku_board.selected_cell is not None:
                     sudoku_board.set_cell_sketched_value(0)
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN and sudoku_board.selected_cell is not None:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN and sudoku_board.selected_cell is not None and sudoku_board.selected_cell.sketched_value != 0:
                     sudoku_board.set_cell_value(sudoku_board.selected_cell.sketched_value)
                     sudoku_board.set_cell_sketched_value(0)
             if new_game:
