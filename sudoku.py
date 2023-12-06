@@ -151,6 +151,7 @@ def end_game(screen, win):
         win_text = end_font.render("You Win", True, (255, 150, 0))
     else:
         win_text = end_font.render("You Lose", True, (255, 150, 0))
+
     win_text_rect = win_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
 
     esc_font = pygame.font.Font(None, 36)
@@ -177,6 +178,8 @@ def particle_animation(screen):
     GREEN = [0, 255, 0]
     BLUE = [0, 0, 255]
 
+    easter_egg = True if random.randint(1, 10) == 1 else False
+
     confetti = []
 
     for i in range(250):
@@ -200,6 +203,9 @@ def particle_animation(screen):
         screen.fill((255, 255, 255))
         end_game(screen, True)
         confetti_color = random.choice([RED, ORANGE, YELLOW, GREEN, BLUE])
+        if easter_egg:
+            imp = pygame.image.load('nahidwin.jpg').convert()
+            screen.blit(imp, (0, 0))
 
         for party in range(len(confetti)):
             pygame.draw.circle(screen, confetti_color, confetti[party], 3)
