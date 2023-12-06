@@ -4,5 +4,5 @@
 
 Created by: Alexander, Drake, Brendan, and Mohammed!
 
-run this on pygame or your pc might actually explode...
+run this on PyCharm or your pc might actually explode...
 We da best sudoku!
