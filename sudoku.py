@@ -2,13 +2,14 @@ import pygame
 from pygame import mixer
 from board import Board
 import random
-
+import os
+chica = []
 
 class bg_music():
     def __init__(self):
         pygame.mixer.init()
         self.music_sfx = pygame.mixer.Channel(1)
-        self.songs = ["music.mp3", "music_medium.mp3", "music_hard.mp3"]
+        self.songs = ["music.mp3", "music_medium.mp3", "music_hard.mp3", "rizz.mp3"]
 
     def play(self, song_index):
         if 0 <= song_index < len(self.songs):
@@ -54,7 +55,7 @@ def draw_game_start(screen):
                 if easy_button_rect.collidepoint(event.pos):
                     print("Easy")
                     music_player.play(0)
-                    return 5
+                    return 1
                 elif medium_button_rect.collidepoint(event.pos):
                     print("Medium")
                     music_player.play(1)
@@ -143,17 +144,27 @@ def help_screen(screen):
 
         pygame.display.update()
 
-
+counter = 0
+def play_end():
+    music_player.play(3)
 def end_game(screen, win):
+    global counter
     screen.fill((255, 255, 255))
     end_font = pygame.font.Font(None, 100)
     if win:
         win_text = end_font.render("You Win", True, (255, 150, 0))
     else:
         win_text = end_font.render("You Lose", True, (255, 150, 0))
-
+    screen_size = (597, 700)
+    img = chica[counter]
+    scaled_image = pygame.transform.scale(img, screen_size)
+    screen.blit(scaled_image, (0, 0))
+    if counter == 54:
+        counter = 0
+    else:
+        counter += 1
+    # Make a tick of 1 second
     win_text_rect = win_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-
     esc_font = pygame.font.Font(None, 36)
     esc = esc_font.render("Press Esc to Exit", True, (255, 150, 0))
     new_game = esc_font.render("Press Enter to Play Again", True, (255, 150, 0))
@@ -162,6 +173,12 @@ def end_game(screen, win):
     screen.blit(win_text, win_text_rect)
     screen.blit(esc, esc_text_rect)
     screen.blit(new_game, new_game_text_rect)
+    # time out for 1 second
+    pygame.time.delay(75)
+
+    pygame.display.update()
+
+
 
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -218,7 +235,7 @@ def particle_animation(screen):
         pygame.display.update()
 
 
-test_mode = True
+test_mode = False
 
 
 def game(counter):
@@ -328,12 +345,23 @@ def game(counter):
                         counter += 1
                     particle_animation(screen)
                 else:
+                    music_player.quit()
+                    if counter == 0:
+                        win_sfx = pygame.mixer.Sound("rizz.mp3")
+                        win_sfx.play()
+                        counter += 1
                     end_game(screen, False)
             pygame.display.update()
     return
 
 
 if __name__ == "__main__":
+    pygame.init()
+    screen = pygame.display.set_mode((597, 700))
+    for x in range(55):
+        file = sorted(os.listdir('chica'))[x]
+        img = pygame.image.load('chica/' + file).convert()
+        chica.append(img)
     while True:
         counter = 0
         game(counter)
