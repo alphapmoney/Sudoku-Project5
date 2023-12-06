@@ -1,6 +1,32 @@
 import pygame
+from pygame import mixer
 from board import Board
 import random
+
+
+class bg_music():
+    def __init__(self):
+        pygame.mixer.init()
+        self.music_sfx = pygame.mixer.Channel(1)
+        self.songs = ["music.mp3", "music_medium.mp3", "music_hard.mp3"]
+
+    def play(self, song_index):
+        if 0 <= song_index < len(self.songs):
+            song = self.songs[song_index]
+            music = mixer.Sound(song)
+            self.music_sfx.play(music, -1)
+            print(f'Playing {song}')
+        else:
+            print("Invalid song index")
+
+    def quit(self):
+        self.music_sfx.stop()
+
+    #def unpause(self):
+        #self.music_sfx.unpause()
+
+
+music_player = bg_music()
 
 
 def draw_game_start(screen):
@@ -27,14 +53,15 @@ def draw_game_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if easy_button_rect.collidepoint(event.pos):
                     print("Easy")
-                    music_sfx = pygame.mixer.Sound("music.mp3")
-                    music_sfx.play()
+                    music_player.play(0)
                     return 5
                 elif medium_button_rect.collidepoint(event.pos):
                     print("Medium")
+                    music_player.play(1)
                     return 40
                 elif hard_button_rect.collidepoint(event.pos):
                     print("Hard")
+                    music_player.play(2)
                     return 50
                 elif help_button_rect.collidepoint(event.pos):
                     help_screen(screen)
@@ -121,7 +148,12 @@ def win_game(screen):
     win_font = pygame.font.Font(None, 100)
     win = win_font.render("You Win", True, (255, 150, 0))
     win_text_rect = win.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+
+    esc_font = pygame.font.Font(None, 36)
+    esc = esc_font.render("Press Esc to Exit", True, (255, 150, 0))
+    esc_text_rect = esc.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
     screen.blit(win, win_text_rect)
+    screen.blit(esc, esc_text_rect)
 
 
 def particle_animation(screen):
@@ -145,6 +177,9 @@ def particle_animation(screen):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                quit()
 
         screen.fill((255, 255, 255))
         win_game(screen)
@@ -161,7 +196,7 @@ def particle_animation(screen):
         pygame.display.update()
 
 
-# test_mode = True
+test_mode = True
 def game(counter):
     while True:
         pygame.init()
@@ -186,6 +221,7 @@ def game(counter):
                             sudoku_board.reset()
                         elif sudoku_board.restart_button_rect.collidepoint(event.pos):
                             new_game = True
+                            music_player.quit()
                             break
                         elif sudoku_board.exit_button_rect.collidepoint(event.pos):
                             print("Bye bye thanks for playing")
@@ -254,21 +290,20 @@ def game(counter):
             else:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 sudoku_board.draw(False, False, False)
-            # if test_mode:  # Define a variable for test mode
-            #     for row in range(9):
-            #         for col in range(9):
-            #             sudoku_board.cells[row][col].value = sudoku_board.complete_board[row][col]
+            if test_mode:  # Define a variable for test mode
+                for row in range(9):
+                    for col in range(9):
+                        sudoku_board.cells[row][col].value = sudoku_board.complete_board[row][col]
 
             if sudoku_board.is_full():
                 sudoku_board.check_win()
-                music_sfx = pygame.mixer.Sound("music.mp3")
-                music_sfx.stop()
+                music_player.quit()
                 if counter == 0:
                     win_sfx = pygame.mixer.Sound("you_win.mp3")
                     win_sfx.play()
                     counter += 1
-                particle_animation(screen)  # Move particle animation here
                 win_game(screen)
+                particle_animation(screen)  # Move particle animation here
             pygame.display.update()
 
 
