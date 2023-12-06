@@ -9,7 +9,8 @@ class bg_music():
     def __init__(self):
         pygame.mixer.init()
         self.music_sfx = pygame.mixer.Channel(1)
-        self.songs = ["music.mp3", "music_medium.mp3", "music_hard.mp3", "rizz.mp3"]
+        self.songs = ["music.mp3", "music_medium.mp3", "music_hard.mp3", "rizz.mp3","areyoustrongbecauseyourenahidwin.mp3",
+                      "you_win.mp3"]
 
     def play(self, song_index):
         if 0 <= song_index < len(self.songs):
@@ -55,7 +56,7 @@ def draw_game_start(screen):
                 if easy_button_rect.collidepoint(event.pos):
                     print("Easy")
                     music_player.play(0)
-                    return 1
+                    return 30
                 elif medium_button_rect.collidepoint(event.pos):
                     print("Medium")
                     music_player.play(1)
@@ -145,8 +146,7 @@ def help_screen(screen):
         pygame.display.update()
 
 counter = 0
-def play_end():
-    music_player.play(3)
+
 def end_game(screen, win):
     global counter
     screen.fill((255, 255, 255))
@@ -155,14 +155,14 @@ def end_game(screen, win):
         win_text = end_font.render("You Win", True, (255, 150, 0))
     else:
         win_text = end_font.render("You Lose", True, (255, 150, 0))
-    screen_size = (597, 700)
-    img = chica[counter]
-    scaled_image = pygame.transform.scale(img, screen_size)
-    screen.blit(scaled_image, (0, 0))
-    if counter == 54:
-        counter = 0
-    else:
-        counter += 1
+        screen_size = (597, 700)
+        img = chica[counter]
+        scaled_image = pygame.transform.scale(img, screen_size)
+        screen.blit(scaled_image, (0, 0))
+        if counter == 54:
+            counter = 0
+        else:
+            counter += 1
     # Make a tick of 1 second
     win_text_rect = win_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     esc_font = pygame.font.Font(None, 36)
@@ -174,28 +174,30 @@ def end_game(screen, win):
     screen.blit(esc, esc_text_rect)
     screen.blit(new_game, new_game_text_rect)
     # time out for 1 second
-    pygame.time.delay(75)
-
-    pygame.display.update()
+    if not win:
+        pygame.time.delay(75)
 
 
 
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            music_player.quit()
             game(0)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             pygame.quit()
             quit()
 
-
+nahidwin_counter = 0
 def particle_animation(screen):
+    global nahidwin_counter
     RED = [255, 0, 0]
     ORANGE = [255, 165, 0]
     YELLOW = [255, 222, 179]
     GREEN = [0, 255, 0]
     BLUE = [0, 0, 255]
 
-    easter_egg = True if random.randint(1, 10) == 1 else False
+    easter_egg = True if random.randint(1, 5) == 1 else False
+    #easter_egg = True
 
     confetti = []
 
@@ -215,14 +217,24 @@ def particle_animation(screen):
                 pygame.quit()
                 quit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                music_player.quit()
                 game(0)
 
         screen.fill((255, 255, 255))
         end_game(screen, True)
         confetti_color = random.choice([RED, ORANGE, YELLOW, GREEN, BLUE])
         if easter_egg:
-            imp = pygame.image.load('nahidwin.jpg').convert()
-            screen.blit(imp, (0, 0))
+            if nahidwin_counter == 0:
+                music_player.play(4)
+                nahidwin_counter += 1
+            image = pygame.image.load('nahidwin.jpg')
+            img = pygame.transform.scale(image, (597, 700))
+            screen.blit(img, (0, 0))
+
+        else:
+            if nahidwin_counter == 0:
+                music_player.play(5)
+                nahidwin_counter += 1
 
         for party in range(len(confetti)):
             pygame.draw.circle(screen, confetti_color, confetti[party], 3)
@@ -239,9 +251,14 @@ test_mode = False
 
 
 def game(counter):
+    global nahidwin_counter
+    nahidwin_counter = 0
     game_over = False
     while not game_over:
         pygame.init()
+        music_player.quit()
+        win_sfx = pygame.mixer.Sound("rizz.mp3")
+        win_sfx.stop()
 
         screen = pygame.display.set_mode((597, 700))
         difficulty = draw_game_start(screen)
@@ -338,17 +355,10 @@ def game(counter):
 
             if sudoku_board.is_full():
                 if sudoku_board.check_win():
-                    music_player.quit()
-                    if counter == 0:
-                        win_sfx = pygame.mixer.Sound("you_win.mp3")
-                        win_sfx.play()
-                        counter += 1
                     particle_animation(screen)
                 else:
-                    music_player.quit()
                     if counter == 0:
-                        win_sfx = pygame.mixer.Sound("rizz.mp3")
-                        win_sfx.play()
+                        music_player.play(3)
                         counter += 1
                     end_game(screen, False)
             pygame.display.update()
