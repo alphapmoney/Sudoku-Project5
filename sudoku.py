@@ -22,8 +22,8 @@ class bg_music():
     def quit(self):
         self.music_sfx.stop()
 
-    #def unpause(self):
-        #self.music_sfx.unpause()
+    # def unpause(self):
+    # self.music_sfx.unpause()
 
 
 music_player = bg_music()
@@ -144,16 +144,30 @@ def help_screen(screen):
         pygame.display.update()
 
 
-def win_game(screen):
-    win_font = pygame.font.Font(None, 100)
-    win = win_font.render("You Win", True, (255, 150, 0))
-    win_text_rect = win.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+def end_game(screen, win):
+    screen.fill((255, 255, 255))
+    end_font = pygame.font.Font(None, 100)
+    if win:
+        win_text = end_font.render("You Win", True, (255, 150, 0))
+    else:
+        win_text = end_font.render("You Lose", True, (255, 150, 0))
+    win_text_rect = win_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
 
     esc_font = pygame.font.Font(None, 36)
     esc = esc_font.render("Press Esc to Exit", True, (255, 150, 0))
+    new_game = esc_font.render("Press Enter to Play Again", True, (255, 150, 0))
     esc_text_rect = esc.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
-    screen.blit(win, win_text_rect)
+    new_game_text_rect = new_game.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 85))
+    screen.blit(win_text, win_text_rect)
     screen.blit(esc, esc_text_rect)
+    screen.blit(new_game, new_game_text_rect)
+
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            game(0)
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            pygame.quit()
+            quit()
 
 
 def particle_animation(screen):
@@ -180,9 +194,11 @@ def particle_animation(screen):
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                game(0)
 
         screen.fill((255, 255, 255))
-        win_game(screen)
+        end_game(screen, True)
         confetti_color = random.choice([RED, ORANGE, YELLOW, GREEN, BLUE])
 
         for party in range(len(confetti)):
@@ -197,13 +213,14 @@ def particle_animation(screen):
 
 
 test_mode = True
+
+
 def game(counter):
-    while True:
+    game_over = False
+    while not game_over:
         pygame.init()
 
         screen = pygame.display.set_mode((597, 700))
-        win_screen = pygame.Surface((597, 700))
-        win_game(win_screen)
         difficulty = draw_game_start(screen)
 
         sudoku_board = Board(screen, difficulty)
@@ -286,6 +303,7 @@ def game(counter):
                 sudoku_board.draw(False, False, True)
             elif y < 600 and 0 <= x <= screen.get_width():
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                sudoku_board.hover(x, y)
                 sudoku_board.draw(False, False, False)
             else:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -296,19 +314,20 @@ def game(counter):
                         sudoku_board.cells[row][col].value = sudoku_board.complete_board[row][col]
 
             if sudoku_board.is_full():
-                sudoku_board.check_win()
-                music_player.quit()
-                if counter == 0:
-                    win_sfx = pygame.mixer.Sound("you_win.mp3")
-                    win_sfx.play()
-                    counter += 1
-                win_game(screen)
-                particle_animation(screen)  # Move particle animation here
+                if sudoku_board.check_win():
+                    music_player.quit()
+                    if counter == 0:
+                        win_sfx = pygame.mixer.Sound("you_win.mp3")
+                        win_sfx.play()
+                        counter += 1
+                    particle_animation(screen)
+                else:
+                    end_game(screen, False)
             pygame.display.update()
+    return
 
 
 if __name__ == "__main__":
-    counter = 0
-    game(counter)
     while True:
-        game()
+        counter = 0
+        game(counter)

@@ -39,9 +39,9 @@ class Board:
         for row in range(9):
             for col in range(9):
                 if self.cells[row][col] == self.selected_cell:
-                    self.cells[row][col].draw(True)
+                    self.cells[row][col].draw(True, False)
                 else:
-                    self.cells[row][col].draw(False)
+                    self.cells[row][col].draw(False, False)
 
         # Draw thicker lines
         for i in range(0, (9 * self.cell_size) + 1, self.cell_size):
@@ -79,7 +79,7 @@ class Board:
         col = x // self.cell_size
         if 0 <= row <= 8 and 0 <= col <= 8:
             self.selected_cell = self.cells[row][col]
-            self.selected_cell.draw(True)
+            self.selected_cell.draw(True, False)
             print(self.selected_cell.row, self.selected_cell.col)
         else:
             self.selected_cell = None
@@ -102,16 +102,23 @@ class Board:
             return False
 
     def check_win(self):
-        print("Checking for win!")
         for row in range(9):
             for col in range(9):
                 if self.cells[row][col].value != self.complete_board[row][col]:
-                    print("You lose!")
-                    return
-        print("You win!")
+                    return False
+        return True
 
     def reset(self):
         for row in range(9):
             for col in range(9):
                 self.cells[row][col].locked = False
                 self.cells[row][col].set_cell_reset(self.board[row][col])
+
+    # Check what cell is being hovered on
+    def hover(self, x, y):
+        row = y // self.cell_size
+        col = x // self.cell_size
+        if 0 <= row <= 8 and 0 <= col <= 8:
+            self.cells[row][col].draw(False, True)
+        else:
+            self.selected_cell = None
